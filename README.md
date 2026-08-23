@@ -8,9 +8,9 @@
 
 ---
 
-**💡 Extremely lightweight, zero-allocation in-memory knowledge and entity-relation graph for the FastJava AI Ecosystem.**
+**⚡ Extremely lightweight, zero-allocation in-memory knowledge and entity-relation graph for the FastJava AI Ecosystem.**
 
-FastAIGraph is a **pure Java in-memory graph engine** built to structure, link, and traverse entities, code symbols, and facts. It replaces flat text retrieval with **structured multi-hop relationship traversal** and produces token-efficient serialized sub-graphs for LLM prompt augmentation.
+**FastAIGraph** is a high-performance in-memory knowledge graph engine built to structure, link, and traverse entities, code symbols, and relational facts. It replaces flat text retrieval with **structured multi-hop relationship traversal** and produces token-efficient serialized sub-graphs for LLM prompt augmentation.
 
 [![FastAIGraph Showcase](docs/screenshot.png)](docs/screenshot.png)
 
@@ -18,7 +18,7 @@ FastAIGraph is a **pure Java in-memory graph engine** built to structure, link, 
 
 ## Quick Start
 
-`java
+```java
 import fastaigraph.KnowledgeGraph;
 import fastaigraph.Edge;
 import java.util.List;
@@ -43,7 +43,7 @@ public class Example {
         System.out.println(promptContext);
     }
 }
-`
+```
 
 ---
 
@@ -51,12 +51,11 @@ public class Example {
 
 - [Why FastAIGraph?](#why-fastaigraph)
 - [Quick Start](#quick-start)
-- [Key Features](#key-features)
+- [Features](#features)
 - [Performance Benchmarks](#performance-benchmarks)
 - [API Quick Reference](#api-quick-reference)
+- [Technical Examples & Hero Demos](#technical-examples--hero-demos)
 - [Installation](#installation)
-- [API Reference](#api-reference)
-- [Technical Examples & Demos](#technical-examples--demos)
 - [Platform Support](#platform-support)
 - [License](#license)
 - [Related Projects](#related-projects)
@@ -65,23 +64,23 @@ public class Example {
 
 ## Why FastAIGraph?
 
-Traditional RAG and vector searches only retrieve disconnected text snippets without understanding structured hierarchies or transitive dependencies (e.g. Class A -> calls -> Method B -> in Module C).
+Traditional RAG and vector searches only retrieve disconnected text snippets without understanding structured hierarchies or transitive dependencies (e.g. `Class A -> calls -> Method B -> in Module C`).
 
-FastAIGraph solves this by providing:
+**FastAIGraph** solves this by providing:
 
-- **Explicit Relational Truth** — Triples (Node -> Relation -> Node) eliminate LLM relationship hallucinations.
-- **Multi-Hop Traversal** — Traverse deep graph neighborhoods in microseconds (< 2 µs per query).
-- **Sub-Graph Prompt Serializer** — Formats extracted subgraphs into compact, human- and LLM-readable Markdown context.
-- **Zero External Dependencies** — Built with 100% pure Java 17 primitives with zero Neo4j/TinkerPop/database overhead.
+- **Explicit Relational Truth**: Triples (`Node -> Relation -> Node`) eliminate LLM relationship hallucinations.
+- **Multi-Hop Traversal**: Traverse deep graph neighborhoods in microseconds (< 2 µs per query).
+- **Sub-Graph Prompt Serializer**: Formats extracted subgraphs into compact, human- and LLM-readable Markdown context.
+- **Zero External Dependencies**: Built with 100% pure Java 17 primitives with zero Neo4j/TinkerPop/database overhead.
 
 ---
 
-## Key Features
+## Features
 
-- **🕸️ High-Speed In-Memory Graph** — Sub-microsecond Node and Edge index lookups with concurrent thread safety.
-- **🔍 Multi-Hop BFS Neighborhood Extraction** — Traverse connected entity boundaries up to depth $.
-- **📄 Prompt Context Generator** — Direct serialization to LLM-ready context blocks (	oPromptContext()).
-- **📦 Ultra-Small Footprint** — ~15KB compiled JAR with zero GC pressure on hot lookup paths.
+- **🕸️ High-Speed In-Memory Graph**: Sub-microsecond Node and Edge index lookups with concurrent thread safety.
+- **🔍 Multi-Hop BFS Neighborhood Extraction**: Traverse connected entity boundaries up to depth $N$.
+- **📄 Prompt Context Generator**: Direct serialization to LLM-ready context blocks (`toPromptContext()`).
+- **📦 Ultra-Small Footprint**: ~15KB compiled JAR with zero GC pressure on hot lookup paths.
 
 ---
 
@@ -112,13 +111,22 @@ FastAIGraph is **zero-dependency** and **in-process** for instant knowledge oper
 
 ## API Quick Reference
 
-| Method / Class | Return Type | Description |
-|----------------|-------------|-------------|
-| graph.addNode(id, label) | KnowledgeGraph | Inserts or updates an entity node. |
-| graph.addEdge(src, rel, tgt) | KnowledgeGraph | Links two nodes with a labeled directed relationship. |
-| graph.traverseSubGraph(startId, depth) | List<Edge> | Traverses multi-hop sub-graph edges up to max depth. |
-| graph.toPromptContext(query, depth) | String | Serializes relevant graph neighborhood into LLM prompt text. |
-| graph.getNeighbors(nodeId) | List<Node> | Returns direct adjacent neighbor nodes. |
+| Method | Return Type | Description |
+|---|---|---|
+| `graph.addNode(id, label)` | `KnowledgeGraph` | Inserts or updates an entity node. |
+| `graph.addEdge(src, rel, tgt)` | `KnowledgeGraph` | Links two nodes with a labeled directed relationship. |
+| `graph.traverseSubGraph(startId, depth)` | `List<Edge>` | Traverses multi-hop sub-graph edges up to max depth. |
+| `graph.toPromptContext(query, depth)` | `String` | Serializes relevant graph neighborhood into LLM prompt text. |
+| `graph.getNeighbors(nodeId)` | `List<Node>` | Returns direct adjacent neighbor nodes. |
+
+---
+
+## Technical Examples & Hero Demos
+
+| Case | Java Example | Launcher | Description |
+|---|---|---|---|
+| **Knowledge Graph Demo** | [Demo.java](src/test/java/fastaigraph/Demo.java) | `run-demo.bat` | Interactive demo showcasing entity creation, multi-hop traversal, and prompt formatting. |
+| **JMH Microbenchmarks** | [FastAIGraphBenchmark.java](examples/Benchmark/src/main/java/fastaigraph/FastAIGraphBenchmark.java) | `run-benchmark.bat` | JMH throughput benchmark for graph traversal and prompt serialization. |
 
 ---
 
@@ -126,9 +134,9 @@ FastAIGraph is **zero-dependency** and **in-process** for instant knowledge oper
 
 ### Option 1: Maven (Recommended)
 
-Add the JitPack repository and the dependency to your pom.xml:
+Add the JitPack repository and the dependency to your `pom.xml`:
 
-`xml
+```xml
 <repositories>
     <repository>
         <id>jitpack.io</id>
@@ -137,45 +145,31 @@ Add the JitPack repository and the dependency to your pom.xml:
 </repositories>
 
 <dependencies>
-<!-- FastAIGraph Library -->
-<dependency>
-    <groupId>com.github.andrestubbe</groupId>
-    <artifactId>FastAIGraph</artifactId>
-    <version>0.1.0</version>
-</dependency>
+    <dependency>
+        <groupId>com.github.andrestubbe</groupId>
+        <artifactId>FastAIGraph</artifactId>
+        <version>0.1.0</version>
+    </dependency>
 </dependencies>
-`
+```
 
----
+### Option 2: Gradle (via JitPack)
 
-## API Reference
+```groovy
+repositories {
+    maven { url 'https://jitpack.io' }
+}
 
-### Graph Construction
+dependencies {
+    implementation 'com.github.andrestubbe:FastAIGraph:0.1.0'
+}
+```
 
-`java
-KnowledgeGraph graph = new KnowledgeGraph();
-graph.addNode("user", "Developer");
-graph.addNode("fastjava", "FastJava Ecosystem");
-graph.addEdge("user", "maintains", "fastjava");
-`
+### Option 3: Direct Download (No Build Tool)
 
-### Context Extraction for AI Prompts
+Download the latest JAR directly to add it to your classpath:
 
-`java
-// Extracts related facts and injects directly into AI request
-String graphContext = graph.toPromptContext("fastjava", 2);
-AI ai = FastAI.connect("auto:free");
-ai.stream(graphContext + "\nUser Question: What is FastJava?", System.out::print);
-`
-
----
-
-## Technical Examples & Demos
-
-| Case | Java Example | Launcher | Description |
-|---|---|---|---|
-| **Knowledge Graph Demo** | [Demo.java](src/test/java/fastaigraph/Demo.java) | un-demo.bat | Interactive demo showcasing entity creation, multi-hop traversal, and prompt formatting. |
-| **JMH Microbenchmarks** | [FastAIGraphBenchmark.java](examples/Benchmark/src/main/java/fastaigraph/FastAIGraphBenchmark.java) | un-benchmark.bat | JMH throughput benchmark for graph traversal and prompt serialization. |
+1. 📦 **[FastAIGraph-0.1.0.jar](https://github.com/andrestubbe/FastAIGraph/releases/download/0.1.0/FastAIGraph-0.1.0.jar)** (The Core Library)
 
 ---
 
