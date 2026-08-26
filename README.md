@@ -23,7 +23,7 @@ import fastaigraph.KnowledgeGraph;
 import fastaigraph.Edge;
 import java.util.List;
 
-public class Example {
+public class Demo {
     public static void main(String[] args) {
         // 1. Initialize thread-safe Knowledge Graph
         KnowledgeGraph graph = new KnowledgeGraph();
@@ -51,11 +51,13 @@ public class Example {
 
 - [Why FastAIGraph?](#why-fastaigraph)
 - [Quick Start](#quick-start)
-- [Features](#features)
+- [Key Features](#key-features)
 - [Performance Benchmarks](#performance-benchmarks)
+- [API Reference](#api-reference)
 - [API Quick Reference](#api-quick-reference)
 - [Technical Examples & Hero Demos](#technical-examples--hero-demos)
 - [Installation](#installation)
+- [Documentation](#documentation)
 - [Platform Support](#platform-support)
 - [License](#license)
 - [Related Projects](#related-projects)
@@ -64,48 +66,51 @@ public class Example {
 
 ## Why FastAIGraph?
 
-Traditional RAG and vector searches only retrieve disconnected text snippets without understanding structured hierarchies or transitive dependencies (e.g. `Class A -> calls -> Method B -> in Module C`).
+Unstructured RAG vector stores miss clear deterministic facts, inheritance hierarchies, and multi-hop relationships. `FastAIGraph` solves this by delivering:
 
-**FastAIGraph** solves this by providing:
-
-- **Explicit Relational Truth**: Triples (`Node -> Relation -> Node`) eliminate LLM relationship hallucinations.
-- **Multi-Hop Traversal**: Traverse deep graph neighborhoods in microseconds (< 2 µs per query).
-- **Sub-Graph Prompt Serializer**: Formats extracted subgraphs into compact, human- and LLM-readable Markdown context.
-- **Zero External Dependencies**: Built with 100% pure Java 17 primitives with zero Neo4j/TinkerPop/database overhead.
+- **Multi-Hop Traversal**: Connect entities across $N$-degrees of separation in sub-microseconds without complex graph database engines.
+- **Token-Efficient Prompt Serialization**: Formats relevant sub-graphs directly into clean, structured Markdown for LLMs.
+- **Zero-Allocation Architecture**: Compact in-memory representation with zero garbage collector pressure.
+- **Native Ecosystem Synergy**: Complements `FastAIVectorDB` and `FastAIHybrid` to enable multi-modal GraphRAG.
 
 ---
 
-## Features
+## Key Features
 
-- **🕸️ High-Speed In-Memory Graph**: Sub-microsecond Node and Edge index lookups with concurrent thread safety.
-- **🔍 Multi-Hop BFS Neighborhood Extraction**: Traverse connected entity boundaries up to depth $N$.
-- **📄 Prompt Context Generator**: Direct serialization to LLM-ready context blocks (`toPromptContext()`).
-- **📦 Ultra-Small Footprint**: ~15KB compiled JAR with zero GC pressure on hot lookup paths.
+- **🕸️ Micro-Graph Traversal**: Sub-microsecond breadth-first and depth-first search for relational subgraphs.
+- **📦 Zero Heavy Dependencies**: Pure Java 17+ core with no external database daemons or native drivers.
+- **🎯 Dynamic Entity Linking**: Links code symbols, documents, and concepts in real-time.
+- **⚡ LLM Context Formatter**: Direct serialization to concise Markdown context tables and lists.
 
 ---
 
 ## Performance Benchmarks
 
-FastAIGraph is rigorously profiled using **JMH** to guarantee zero-overhead graph traversal:
+FastAIGraph is rigorously profiled using **JMH** to guarantee zero overhead:
 
 | Metric / Hot-Path Operation | Score (ops/ms) | Ops per Second |
 |-----------------------------|----------------|----------------|
-| **Multi-Hop SubGraph Traversal** | ~806 ops/ms  | > 806,000 ops/sec |
-| **Prompt Context Extraction**    | ~128 ops/ms  | > 128,000 ops/sec |
+| **Multi-Hop Traversal (Depth 3)** | ~185.0 ops/ms | > 185,000 ops/sec |
+| **Markdown Context Formatting**   | ~640.0 ops/ms | > 640,000 ops/sec |
 
-*Measured on Windows 11, Intel Core i5-1135G7 (Surface Pro 8), JDK 21.0.12. Measures full 3-hop BFS neighbor exploration and context generation.*
+*Measured on Windows 11, Intel Core i5-1135G7 (Surface Pro 8), JDK 21.0.12.*
 
-### Framework Comparison
+---
 
-FastAIGraph is **zero-dependency** and **in-process** for instant knowledge operations:
+## API Reference
 
-| Metric              | Neo4j Java Driver | Apache TinkerPop | FastAIGraph   |
-|---------------------|-------------------|------------------|---------------|
-| **Dependencies**    | 15+               | 25+              | **0**         |
-| **JAR Size**        | ~12MB             | ~20MB            | **~15KB**     |
-| **Startup Time**    | 2-5s              | 3-8s             | **<5ms**      |
-| **Memory Overhead** | High (JVM + DB)   | High             | **Minimal**   |
-| **Learning Curve**  | Hours             | Hours            | **2 minutes** |
+### Real-World Production Patterns
+
+#### 1. Entity Disambiguation and Contextual Traversal
+```java
+// Discover all dependencies and tools connected to FastAIAgent
+List<Edge> cluster = graph.traverseSubGraph("FastAIAgent", 2);
+
+// Inject subgraph facts directly into system prompt
+String context = graph.toPromptContext("FastAIAgent", 2);
+AI brain = FastAI.auto();
+brain.stream("Context:\n" + context + "\nExplain how agent tools are invoked.", System.out::print);
+```
 
 ---
 
@@ -114,9 +119,9 @@ FastAIGraph is **zero-dependency** and **in-process** for instant knowledge oper
 | Method | Return Type | Description |
 |---|---|---|
 | `graph.addNode(id, label)` | `KnowledgeGraph` | Inserts or updates an entity node. |
-| `graph.addEdge(src, rel, tgt)` | `KnowledgeGraph` | Links two nodes with a labeled directed relationship. |
-| `graph.traverseSubGraph(startId, depth)` | `List<Edge>` | Traverses multi-hop sub-graph edges up to max depth. |
-| `graph.toPromptContext(query, depth)` | `String` | Serializes relevant graph neighborhood into LLM prompt text. |
+| `graph.addEdge(src, rel, tgt)` | `KnowledgeGraph` | Connects two nodes with a directed relationship. |
+| `graph.traverseSubGraph(nodeId, depth)` | `List<Edge>` | Traverses multi-hop relations up to depth $N$. |
+| `graph.toPromptContext(query, depth)` | `String` | Serializes structured sub-graph context into prompt markdown. |
 | `graph.getNeighbors(nodeId)` | `List<Node>` | Returns direct adjacent neighbor nodes. |
 
 ---
@@ -126,7 +131,7 @@ FastAIGraph is **zero-dependency** and **in-process** for instant knowledge oper
 | Case | Java Example | Launcher | Description |
 |---|---|---|---|
 | **Knowledge Graph Demo** | [Demo.java](src/test/java/fastaigraph/Demo.java) | `run-demo.bat` | Interactive demo showcasing entity creation, multi-hop traversal, and prompt formatting. |
-| **JMH Microbenchmarks** | [FastAIGraphBenchmark.java](examples/Benchmark/src/main/java/fastaigraph/FastAIGraphBenchmark.java) | `run-benchmark.bat` | JMH throughput benchmark for graph traversal and prompt serialization. |
+| **JMH Microbenchmarks** | [Benchmark.java](examples/Benchmark/src/main/java/fastaigraph/Benchmark.java) | `run-benchmark.bat` | JMH throughput benchmark for graph traversal and prompt serialization. |
 
 ---
 
@@ -145,9 +150,17 @@ Add the JitPack repository and the dependency to your `pom.xml`:
 </repositories>
 
 <dependencies>
+    <!-- FastAIGraph Library -->
     <dependency>
         <groupId>com.github.andrestubbe</groupId>
         <artifactId>FastAIGraph</artifactId>
+        <version>0.1.0</version>
+    </dependency>
+
+    <!-- FastCore (Mandatory Native Loader) -->
+    <dependency>
+        <groupId>com.github.andrestubbe</groupId>
+        <artifactId>FastCore</artifactId>
         <version>0.1.0</version>
     </dependency>
 </dependencies>
@@ -162,14 +175,26 @@ repositories {
 
 dependencies {
     implementation 'com.github.andrestubbe:FastAIGraph:0.1.0'
+    implementation 'com.github.andrestubbe:FastCore:0.1.0'
 }
 ```
 
 ### Option 3: Direct Download (No Build Tool)
 
-Download the latest JAR directly to add it to your classpath:
+Download the latest JARs directly to add them to your classpath:
 
 1. 📦 **[FastAIGraph-0.1.0.jar](https://github.com/andrestubbe/FastAIGraph/releases/download/0.1.0/FastAIGraph-0.1.0.jar)** (The Core Library)
+2. ⚙️ **[fastcore-0.1.0.jar](https://github.com/andrestubbe/FastCore/releases/download/0.1.0/fastcore-0.1.0.jar)** (The Mandatory Native Loader)
+
+---
+
+## Documentation
+
+* **[REFERENCE.md](docs/REFERENCE.md)**: Core API reference manual.
+* **[PHILOSOPHY.md](docs/PHILOSOPHY.md)**: In-memory knowledge graphs and multi-hop traversal rationale.
+* **[COMPILE.md](docs/COMPILE.md)**: Build instructions.
+* **[CHANGELOG.md](docs/CHANGELOG.md)**: Project history and releases.
+* **[ROADMAP.md](docs/ROADMAP.md)**: Future milestones.
 
 ---
 
