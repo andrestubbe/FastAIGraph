@@ -1,3 +1,6 @@
+> [!WARNING]
+> **🚧 WIP — Active AI Pipeline Construction & Architecture Optimization in Progress.**
+
 # FastAIGraph 0.1.0 — Ultra-Fast In-Memory Knowledge Graph Engine for Java
 
 [![Status](https://img.shields.io/badge/status-0.1.0-brightgreen.svg)](https://github.com/andrestubbe/FastAIGraph/releases/tag/0.1.0)
